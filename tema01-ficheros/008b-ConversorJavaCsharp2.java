@@ -78,7 +78,7 @@ public class ConversorJavaCsharp {
                 }
             }
             ficheroEntrada.close();
-                ficheroSalida.close();
+            ficheroSalida.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
