@@ -2,4 +2,4 @@
 
 ## Tema 1
 
-Aquí estarán los ejercicios del tema 1
+Ejercicios del tema 1 (ficheros de texto, binarios, serialización)
