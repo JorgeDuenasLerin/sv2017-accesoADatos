@@ -31,9 +31,8 @@ public class ReadBMP {
             }
             else 
                 System.out.println("No es un fichero BMP");
-            
+            fichEntrada.close();
         }
-        
         catch (FileNotFoundException e) {
             System.out.println("El fichero no se ha encontrado.");
         }
