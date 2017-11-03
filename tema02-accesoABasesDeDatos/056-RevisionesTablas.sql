@@ -3,7 +3,7 @@ create table coches
     matricula varchar(10) primary key,
     marca varchar(20), 
     modelo varchar(30),
-    fechaMatriculacion date,
+    fechaMatriculacion date
 );
 
 create table personas
