@@ -55,10 +55,12 @@ public class Biblioteca1 {
                         indicarPrestamo(con, fechaInicio, fechaFin);
                         break;
                     case "4":
-                        mostrarDNIS(con);
-                        System.out.println("Introduce DNI: ");
+                        mostrarUsuarios(con);
+                        System.out.println("Introduce código de usuario: ");
                         String dni = entrada.nextLine();
-                        mostrarCogidos(con, dni);
+                        System.out.println("Introduce un fragmento del nombre del libro: ");
+                        String fragmento = entrada.nextLine();
+                        mostrarLibros(con, fragmento);
                         System.out.println("Introduce ISBN: ");
                         String isbn2 = entrada.nextLine();
                         devolverPrestamos(con,dni,isbn2);
@@ -160,10 +162,10 @@ public class Biblioteca1 {
         }
     }
 
-    public static void mostrarDNIS(Connection con) {
+    public static void mostrarUsuarios(Connection con) {
         try {
             Statement statement = con.createStatement();
-            String sql = "SELECT dni, nombre FROM personas;";
+            String sql = "SELECT cod, nombre FROM usuarios;";
             ResultSet rs = statement.executeQuery(sql);
             System.out.println(String.format("%-10s", "DNI")
                     + String.format("%-15s", "NOMBRE"));
@@ -186,56 +188,50 @@ public class Biblioteca1 {
         try {
             // MOSTRAR LIBROS
             Statement statementLibros = con.createStatement();
-            String mostrarLibros = "SELECT dni, nombre FROM libros";
+            String mostrarLibros = "SELECT cod, titulo, autor FROM libros";
             ResultSet rsLibros = statementLibros.executeQuery(mostrarLibros);
-            System.out.println(String.format("%-20s", "DNI")
-                    + String.format("%-20s", "Nombre"));
-            System.out.println("--------------------------------------------"
-                    + "-----------------------------------------------------"
-                    + "--------");
             while (rsLibros.next()) {
-                System.out.println(String.format("%-20s", rsLibros.getString(1))
-                        + String.format("%-20s", rsLibros.getString(2)));
+                System.out.println( rsLibros.getString(1) + " : " +
+                        rsLibros.getString(2) + " - " +
+                        rsLibros.getString(3));
             }
             statementLibros.close();
             rsLibros.close();
 
-            System.out.println("Dime el libro que quieres: ");
+            System.out.println("Dime el código del libro: ");
             String codLibro = sc.nextLine();
 
             // MOSTRAR PERSONAS
             Statement statementPersonas = con.createStatement();
-            String mostrarPersonas = "SELECT dni, nombre FROM libros";
+            String mostrarPersonas = "SELECT cod, nombre FROM usuarios";
             ResultSet rsPersonas = statementPersonas.executeQuery(mostrarPersonas);
-            System.out.println(String.format("%-20s", "DNI")
-                    + String.format("%-20s", "Nombre"));
-            System.out.println("--------------------------------------------"
-                    + "-----------------------------------------------------"
-                    + "--------");
             while (rsPersonas.next()) {
-                System.out.println(String.format("%-20s", rsPersonas.getString(1))
-                        + String.format("%-20s", rsPersonas.getString(2)));
+                System.out.println(rsPersonas.getString("cod") + " - " +
+                        rsPersonas.getString("nombre"));
             }
             statementPersonas.close();
             rsPersonas.close();
 
-            System.out.println("Dime tu DNI: ");
+            System.out.println("Dime el código de usuario: ");
             String dni = sc.nextLine();
 
             // GUARDAMOS EL PRESTAMO
             Statement statementPrestamos = con.createStatement();
-            String anhadirPrestamo = "INSERT INTO prestar (dni_persona,"
-                    + " isbn_libro, fecha_inicio, fecha_fin) VALUES ('" + dni
+            String anadirPrestamo = "INSERT INTO prestar (codUsuario,"
+                    + " codLibro, fechaPrest, fechaDevolPrevista) VALUES ('" + dni
                     + "','" + codLibro + "','" + fechaInicio + "','"
                     + fechaFin + "');";
-            statementPrestamos.executeUpdate(anhadirPrestamo);
+            //System.out.println(anadirPrestamo);
+            statementPrestamos.executeUpdate(anadirPrestamo);
             System.out.println("Prestamo guardado satisfactoriamente.");
             statementPrestamos.close();
         } catch (SQLException e) {
-            System.out.println("Error: No se ha podido guardar el prestamo.");
+            System.out.println("Error, No se ha podido guardar el prestamo:"
+                + e.getMessage());
         }
     }
-
+    
+    /*
     public static void mostrarCogidos(Connection con, String dni) {
         try {
             Statement statement = con.createStatement();
@@ -258,21 +254,26 @@ public class Biblioteca1 {
             System.out.println("Error: " + e.getMessage());
         }
     }
+    */
 
-    public static void devolverPrestamos(Connection con, String dniPersona,
-            String isbnLibro) {
+    public static void devolverPrestamos(Connection con, String usuario,
+            String libro) {
         //persona, libro, fecha actual
 
         try {
             //update tabla prestamo, eliminar ese dni y ese 
             Statement statement = con.createStatement();
-            String update = "DELETE FROM prestar WHERE dni_persona = "
-                    + dniPersona + " AND isbn_libro = "
-                    + isbnLibro + ";";
+            String update = "UPDATE prestar SET fechaDevolReal = CURRENT_DATE " +
+                "WHERE codUsuario = '"+ usuario + "'" +
+                "    AND codLibro = '"+ libro +"'" +
+                "    AND fechaDevolReal IS NULL;";
 
-            statement.executeUpdate(update);
+            int cantidad = statement.executeUpdate(update);
             statement.close();
-            System.out.println("Préstamo devuelto");
+            if (cantidad == 1)
+                System.out.println("Préstamo devuelto");
+            else
+                System.out.println("No se ha podido marcar como devuelto");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
