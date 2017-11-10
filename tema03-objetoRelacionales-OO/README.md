@@ -2,4 +2,4 @@
 
 ## Tema 3
 
-Aquí estarán los ejercicios del tema 3
+Ejercicios del tema 3: bases de datos objeto-relacionales y orientadas a objeto
