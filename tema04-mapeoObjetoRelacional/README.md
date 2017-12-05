@@ -1,5 +1,5 @@
-# sv2017-accesoADatos
+﻿# sv2017-accesoADatos
 
 ## Tema 4
 
-Aquí estarán los ejercicios del tema 4
+Ejercicios del tema 4: Mapeo objeto-relacional
