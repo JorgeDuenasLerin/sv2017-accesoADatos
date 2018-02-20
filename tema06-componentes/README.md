@@ -2,4 +2,4 @@
 
 ## Tema 6
 
-Aquí estarán los ejercicios del tema 6
+Ejercicios del tema 6: componentes de acceso a datos
